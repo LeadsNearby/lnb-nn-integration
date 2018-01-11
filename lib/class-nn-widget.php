@@ -18,15 +18,6 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
 		}
 
 		function get_html( $shortcode_atts ) {
-
-			extract(
-				shortcode_atts(
-					array(
-						'type' => null
-						),
-					$shortcode_atts
-					)
-				);
 			
 			$nn_data = array();
 			global $post;
@@ -41,23 +32,19 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
 				$html = "This widget requires the NN_API class";
 			}
 
-			if( !empty( $nn_data ) ) {
+			if( ! empty( $nn_data ) ) {
 
-				if( $post->ID != 4 && $post->post_parent != 4 ) :
+				wp_enqueue_style( 'lnb-reviews-widget-styles' );
 
-					wp_enqueue_style( 'lnb-reviews-widget-styles' );
+				ob_start(); ?>
 
-					ob_start(); ?>
+				<div class="lnbReviewsWidget">
+					<h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
+					<?php echo file_get_contents( plugin_dir_path( dirname( __FILE__ ) ) . '/assets/svg-stars.svg' ); ?>
+					<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['rating']; ?> out of <?php echo $nn_data['count']; ?> reviews</span>
+				</div>
 
-					<div class="lnbReviewsWidget">
-						<h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
-						<?php echo file_get_contents( plugin_dir_path( dirname( __FILE__ ) ) . '/assets/svg-stars.svg' ); ?>
-						<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['rating']; ?> out of <?php echo $nn_data['count']; ?> reviews</span>
-					</div>
-
-					<?php $html = ob_get_clean();
-
-				endif;
+				<?php $html = ob_get_clean();
 
 			} else {
 
