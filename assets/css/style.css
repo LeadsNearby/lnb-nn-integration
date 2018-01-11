@@ -1,0 +1,21 @@
+.lnbReviewsWidget {
+    display: block;
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.lnbReviewsWidget__title {
+    margin-bottom: 1rem;
+}
+
+.lnbReviewsWidget__stars {
+    display: block;
+    margin: 1rem auto;
+    max-width: 250px;
+}
+
+.lnbReviewsWidget__stars {
+    display: block;
+    text-align: center;
+}
