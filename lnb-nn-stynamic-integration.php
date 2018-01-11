@@ -16,4 +16,8 @@ new NN_Static_Widget();
 add_action( 'wp_update_nav_menu', array( 'NN_API', 'reset_cache' ) );
 add_action( 'after_rocket_clean_cache_dir', array( 'NN_API', 'reset_cache' ) );
 
+require_once( plugin_dir_path( __FILE__ ) . '/lib/updater/github-updater.php' );
+
+add_action( 'admin_init', function() { new GitHubPluginUpdater( __FILE__, 'LeadsNearby', "lnb-nn-integration" ); } );
+
 ?>
