@@ -3,7 +3,7 @@
 /*
 Plugin Name: LeadsNearby Nearby Now Stynamic Integration
 Description: Includes an API class that gets and stores Nearby Now data in the database for easy retrieval. Also includes a widget.
-Version: 1.0.0
+Version: 1.0.1
 Author: LeadsNearby (Andrew Gillingham)
 */
 
