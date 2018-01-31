@@ -1,21 +1,44 @@
 .lnbReviewsWidget {
+    --accent-color: #000;
+    --stars-color: #fee300;
+    --stars-max-width: 250px;
+    --display: block;
     display: block;
     text-align: center;
     padding: 1rem;
     margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+.lnbReviewsWidget--inline {
+    --display: inline-block;
+    --stars-max-width: 150px;
 }
 
 .lnbReviewsWidget__title {
+    display: var(--display);
     margin-bottom: 1rem;
+    color: var(--accent-color) !important;
 }
 
 .lnbReviewsWidget__stars {
-    display: block;
+    display: var(--display);
     margin: 1rem auto;
-    max-width: 250px;
+    max-width: var(--stars-max-width);
 }
 
-.lnbReviewsWidget__stars {
-    display: block;
-    text-align: center;
+.lnbReviewsWidget__stars path {
+    fill: var(--stars-color);
+}
+
+.lnbReviewsWidget__data {
+    display: var(--display);
+}
+
+.lnbReviewsWidget--inline * {
+    vertical-align: middle;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 4px;
+    margin-right: 4px;
 }

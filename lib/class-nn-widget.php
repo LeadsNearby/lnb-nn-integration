@@ -18,6 +18,32 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
 		}
 
 		function get_html( $shortcode_atts ) {
+
+			extract( shortcode_atts(
+				array(
+					'type' => 'block',
+					'size' => 'medium',
+					'accent' => '#000',
+					'stars' => '#fee300',
+				),
+				$shortcode_atts,
+				'static-nn-widget'
+			) );
+
+			$type = ! empty( $type ) ? $type : 'block';
+
+			$css_widget_vars = array(
+				'--accent-color' => $accent,
+				'--stars-color' => $stars,
+			);
+
+			$css_widget_string = '';
+
+			foreach( $css_widget_vars as $key => $value ) {
+				if( $value ) {
+					$css_widget_string .= $key . ':' . $value . ';'; 
+				}
+			}
 			
 			$nn_data = array();
 			global $post;
@@ -38,7 +64,7 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
 
 				ob_start(); ?>
 
-				<div class="lnbReviewsWidget">
+				<div class="lnbReviewsWidget lnbReviewsWidget--<?php echo $type; ?>" style="<?php echo $css_widget_string; ?>">
 					<h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
 					<?php echo file_get_contents( plugin_dir_path( dirname( __FILE__ ) ) . '/assets/svg-stars.svg' ); ?>
 					<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['rating']; ?> out of <?php echo $nn_data['count']; ?> reviews</span>

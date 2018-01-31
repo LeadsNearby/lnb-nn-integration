@@ -21,6 +21,13 @@ Publicly accessible functions:
 
 #### Nearby Now "Stynamic" Widget
 
+A customized version of the default Nearby Now widget which uses the NN_API class.
+
 Shortcode: **[static-nn-widget]**
 
-A customized version of the default Nearby Now widget which uses the NN_API class.
+**Shortcode Attributes**
+* type
+    * block - **default**
+    * inline
+* accent - #000 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+* stars - #fee300 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
