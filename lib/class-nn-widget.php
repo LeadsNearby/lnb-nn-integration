@@ -21,6 +21,7 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
 
 			extract( shortcode_atts(
 				array(
+                    'name' => 'true',
 					'type' => 'block',
 					'size' => 'medium',
 					'accent' => '#000',
@@ -65,8 +66,11 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
 				ob_start(); ?>
 
 				<div class="lnbReviewsWidget lnbReviewsWidget--<?php echo $type; ?>" style="<?php echo $css_widget_string; ?>">
-					<h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
-					<?php echo file_get_contents( plugin_dir_path( dirname( __FILE__ ) ) . '/assets/svg-stars.svg' ); ?>
+					<?php echo $name; ?>
+                    <?php if( $name !== "false" ) : ?>
+                    <h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
+                    <?php endif; ?>
+                    <?php echo file_get_contents( plugin_dir_path( dirname( __FILE__ ) ) . '/assets/svg-stars.svg' ); ?>
 					<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['rating']; ?> out of <?php echo $nn_data['count']; ?> reviews</span>
 				</div>
 
