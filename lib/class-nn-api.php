@@ -40,10 +40,12 @@ if( ! class_exists( 'NN_API' ) ) :
 				$array_cities[] = $builder[0]; 
 			}
 
-			$name_string = preg_match( '/<meta itemprop="name" content="(.*?)"/', $response, $name_stringage );
+            $name_string = preg_match( '/<meta itemprop="name" content="(.*?)"/', $response, $name_stringage );
+            $itemtype_string = preg_match( '/nn-review-inner-cont" itemscope itemtype="https:\/\/schema\.org\/(.*?)"/', $response, $itemtype_stringage );
 
 			$data = array(
-				'name' => $name_stringage[1],
+                'name' => $name_stringage[1],
+                '@itemtype' => $itemtype_stringage[1],
 				'rating' => $matches[2][0],
 				'count' => $matches[2][1],
 				'cities' => $array_cities
