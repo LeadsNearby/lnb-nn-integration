@@ -1,4 +1,10 @@
 <svg class="lnbReviewsWidget__stars" id="lnb-review-widget-stars" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 35" width="200" height="35">
-    <style type="text/css">.lnbReviewsWidget__stars path{fill:#fee300}</style>
+    <style type="text/css">.lnbReviewsWidget__stars path{fill:#fee300;stroke:#fee300;stroke-width:1}</style>
+    <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+        </linearGradient>
+    </defs>
     <path d="M20.5.4L26 11.6l12.4 1.8-9 8.7 2.2 12.3-11.1-5.8-11 5.8 2.1-12.3-9-8.7L15 11.6zM60.1.4l5.6 11.2L78 13.4l-8.9 8.7 2.1 12.3-11.1-5.8-11 5.8 2.1-12.3-8.9-8.7 12.3-1.8zM99.8.4l5.5 11.2 12.3 1.8-8.9 8.7 2.1 12.3-11-5.8-11.1 5.8 2.1-12.3-8.9-8.7 12.3-1.8zM139.4.4l5.5 11.2 12.4 1.8-9 8.7 2.1 12.3-11-5.8-11.1 5.8 2.1-12.3-8.9-8.7 12.4-1.8zM179 .4l5.5 11.2 12.4 1.8-9 8.7 2.2 12.3-11.1-5.8-11 5.8 2.1-12.3-9-8.7 12.4-1.8z"/>
 </svg>

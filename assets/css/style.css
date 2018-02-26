@@ -29,6 +29,7 @@
 
 .lnbReviewsWidget__stars path {
     fill: var(--stars-color);
+    stroke: var(--stars-color);
 }
 
 .lnbReviewsWidget__data {

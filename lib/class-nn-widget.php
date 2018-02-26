@@ -61,12 +61,11 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
 
 			if( ! empty( $nn_data ) ) {
 
-				wp_enqueue_style( 'lnb-reviews-widget-styles' );
+                wp_enqueue_style( 'lnb-reviews-widget-styles' );
 
 				ob_start(); ?>
 
-				<div class="lnbReviewsWidget lnbReviewsWidget--<?php echo $type; ?>" style="<?php echo $css_widget_string; ?>">
-					<?php echo $name; ?>
+				<div class="lnbReviewsWidget lnbReviewsWidget--<?php echo $type; ?>"<?php if( $css_widget_string ) { ?> style="<?php echo $css_widget_string; ?>"<?php } ?>>
                     <?php if( $name !== "false" ) : ?>
                     <h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
                     <?php endif; ?>

@@ -30,5 +30,5 @@ Shortcode: **[static-nn-widget]**
 * type
     * block - **default**
     * inline
-* accent - #000 <span style="display:inline-block;width:75px;height:100%;background-color:#000">&nbsp;</span> is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
-* stars - #fee300 <span style="display:inline-block;width:75px;height:100%;background-color:#fee300">&nbsp;</span> is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+* accent - #000 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+* stars - #fee300 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
