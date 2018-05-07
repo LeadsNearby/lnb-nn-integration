@@ -1,145 +1,225 @@
 <?php
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+namespace lnb\core;
+
 // Exit if accessed directly
+if (!defined('ABSPATH')) {
+    exit('Direct script access denied.');
+}
 
-if (!class_exists('NN_API')):
+require_once plugin_dir_path(__FILE__) . '/dom-parser/HtmlDomParser.php';
+use \Sunra\PhpSimple\HtmlDomParser;
 
-    class NN_API {
+class NNApi {
 
-        private static $transient = 'nn_data';
+    private $api_key = '';
+    private $transient_key = '';
 
-        public static function get_nn_data() {
-            return self::get_data();
+    public function __construct($api_key) {
+        $this->api_key = $api_key;
+        $this->transient_key = hash('sha256', $api_key);
+    }
+
+    public function clear_cache() {
+        return delete_transient('nearby_now_data_' . $this->transient_key);
+    }
+
+    private function get_local_data() {
+        return get_transient('nearby_now_data_' . $this->transient_key);
+    }
+
+    private function get_remote_data() {
+        $response = wp_remote_get('https://api.sidebox.com/plugin/nearbyserviceareareviewcombo/?storefronttoken=' . $this->api_key . '&reviewcount=50&reviewcityurl=cityurl&checkincount=0');
+        if (is_wp_error($response)) {
+            return $response;
         }
+        $response_body = wp_remote_retrieve_body($response);
+        $data = $this->parse_remote_data($response_body);
+        set_transient('nearby_now_data_' . $this->transient_key, $data, 60 * 60 * 6);
+        return $data;
+    }
 
-        public static function get_data() {
-
-            $data = self::get_cache();
-
-            if (!$data) {
-                $data = self::get_remote_data();
-            }
-
-            return $data;
-
+    private function get_remote_city_data($city, $state) {
+        $response = wp_remote_get('https://api.sidebox.com/plugin/nearbyserviceareareviewcombo/?storefronttoken=' . $this->api_key . '&reviewcount=25&checkincount=25&city=' . trim($city) . '&state=' . trim($state));
+        if (is_wp_error($response)) {
+            return $response;
         }
+        $response_body = wp_remote_retrieve_body($response);
+        $data = $this->parse_remote_city_data($response_body);
+        return $data;
+    }
 
-        private static function get_remote_data() {
+    private function parse_remote_data($raw_data) {
 
-            $nn_options = get_option('nearbynow_options');
-            $apikey = $nn_options['text_string'];
+        $dom = HtmlDomParser::str_get_html($raw_data);
 
-            if (!$apikey) {
-                return null;
-            }
+        $company_name = $dom->find('[itemprop="name"]', 0)->content;
+        $rating_value = $dom->find('[itemprop="ratingValue"]', 0)->plaintext;
+        $review_count = $dom->find('[itemprop="reviewCount"]', 0)->plaintext;
 
-            $url = 'https://api.sidebox.com/plugin/nearbyserviceareareviewcombo/?storefronttoken=' . $apikey . '&reviewcount=50&reviewcityurl=cityurl&checkincount=0';
-            $response = file_get_contents($url);
-            $string = preg_match_all('/<span itemprop="(.*?)">(.*?)<\/span>/', $response, $matches);
-            $string_cities = preg_match_all('/<a href="cityurl">(.*?)<\/a>/', $response, $matches_cities);
-            $array_cities = array();
-
-            foreach ($matches_cities[1] as $city) {
-                $builder = explode(', ', $city);
-                $array_cities[] = $builder[0];
-            }
-
-            $name_string = preg_match('/<meta itemprop="name" content="(.*?)"/', $response, $name_stringage);
-            $itemtype_string = preg_match('/nn-review-inner-cont" itemscope itemtype="https:\/\/schema\.org\/(.*?)"/', $response, $itemtype_stringage);
-
-            $data = array(
-                'name' => $name_stringage[1],
-                '@itemtype' => $itemtype_stringage[1],
-                'rating' => $matches[2][0],
-                'count' => $matches[2][1],
-                'cities' => $array_cities,
+        $raw_locations = $dom->find('.nn-samap-topcity > a');
+        $locations = array();
+        foreach ($raw_locations as $raw_location) {
+            $raw_location_array = explode(',', $raw_location->plaintext);
+            $city = $raw_location_array[0];
+            $state = $raw_location_array[1];
+            $locations[sanitize_title($city)] = array(
+                'city' => $city,
+                'state' => $state,
             );
+        }
 
-            $review_array_title = preg_match_all('/<h3 itemprop="name"[^\>]*>(.*?)<\/h3>/', $response, $review_array_title_matches);
-            $review_array_title = $review_array_title_matches[1];
+        $raw_reviews = $dom->find('[itemprop="review"]');
+        $reviews = array();
 
-            $review_array_body = preg_match_all('/<p class="nn-review-body" itemprop="description">[^a-z,A-Z,0-9,$]*(.*)[^a-z,A-Z,0-9,$]*<\/p>/', $response, $review_array_body_matches);
-            $review_array_body = $review_array_body_matches[1];
-
-            $review_array_date = preg_match_all('/<time itemprop="datePublished" datetime="(.*)">/', $response, $review_array_date_matches);
-            $review_array_date = $review_array_date_matches[1];
-
-            $review_array_people = preg_match_all('/<span itemprop="name"[^\>]*>(.*?)<\/span>/', $response, $review_array_people_matches);
-            $review_array_people = $review_array_people_matches[1];
-
-            $review_array_city = preg_match_all('/<span itemprop="addressLocality"[^\>]*>(.*?)<\/span>/', $response, $review_array_city_matches);
-            $review_array_city = $review_array_city_matches[1];
-
-            $review_array_state = preg_match_all('/<span itemprop="addressRegion"[^\>]*>(.*?)<\/span>/', $response, $review_array_state_matches);
-            $review_array_state = $review_array_state_matches[1];
-
-            $review_array_rating = preg_match_all('/<span itemprop="ratingValue"[^\>]*>(.*?)<\/span>/', $response, $review_array_rating_matches);
-            $review_array_rating = $review_array_rating_matches[1];
-
-            $data['reviews'] = array();
-
-            foreach ($review_array_title as $index => $title) {
-
-                $data['reviews'][] = array(
-                    'name' => $title,
-                    'datePublished' => $review_array_date[$index],
-                    'author' => array(
-                        '@type' => 'Person',
-                        'name' => $review_array_people[$index],
-                        'address' => array(
-                            '@type' => 'PostalAddress',
-                            'addressLocality' => $review_array_city[$index],
-                            'addressRegion' => $review_array_state[$index],
-                        ),
+        foreach ($raw_reviews as $raw_review) {
+            $name = $raw_review->find('[itemprop="name"]', 0)->plaintext;
+            $date_published = $raw_review->find('[itemprop="datePublished"]', 0)->datetime;
+            $description = $raw_review->find('[itemprop="description"]', 0)->plaintext;
+            $author = $raw_review->find('[itemprop="author"]', 0)->find('[itemprop="name"]', 0)->plaintext;
+            $city = $raw_review->find('[itemprop="author"]', 0)->find('[itemprop="addressLocality"]', 0)->plaintext;
+            $state = $raw_review->find('[itemprop="author"]', 0)->find('[itemprop="addressRegion"]', 0)->plaintext;
+            $rating_value = $raw_review->find('[itemprop="ratingValue"]', 0)->plaintext;
+            $reviews[] = array(
+                '@type' => 'Review',
+                'name' => trim($name),
+                'datePublished' => $date_published,
+                'description' => trim($description),
+                'author' => array(
+                    '@type' => 'Author',
+                    'name' => trim($author),
+                    'address' => array(
+                        '@type' => 'PostalAddress',
+                        'addressLocality' => trim($city),
+                        'addressRegion' => trim($state),
                     ),
-                    'reviewBody' => htmlspecialchars_decode(strip_tags($review_array_body[$index])),
-                    'reviewRating' => array(
-                        'ratingValue' => $review_array_rating[$index],
-                        'bestRating' => '5',
+                ),
+                'reviewRating' => array(
+                    '@type' => 'Rating',
+                    'ratingValue' => trim($rating_value),
+                ),
+            );
+        }
+
+        $data = array(
+            'name' => $company_name,
+            'cities' => $locations,
+            'aggregateRating' => array(
+                '@type' => 'AggregateRating',
+                'ratingValue' => $rating_value,
+                'reviewCount' => $review_count,
+            ),
+            'reviews' => $reviews,
+        );
+
+        return $data;
+    }
+
+    private function parse_remote_city_data($raw_data) {
+
+        $dom = HtmlDomParser::str_get_html($raw_data);
+
+        $raw_reviews = $dom->find('[itemprop="review"]');
+        $reviews = array();
+
+        foreach ($raw_reviews as $raw_review) {
+            $name = $raw_review->find('[itemprop="name"]', 0)->plaintext;
+            $date_published = $raw_review->find('[itemprop="datePublished"]', 0)->datetime;
+            $description = $raw_review->find('[itemprop="description"]', 0)->plaintext;
+            $author = $raw_review->find('[itemprop="author"]', 0)->find('[itemprop="name"]', 0)->plaintext;
+            $city = $raw_review->find('[itemprop="author"]', 0)->find('[itemprop="addressLocality"]', 0)->plaintext;
+            $state = $raw_review->find('[itemprop="author"]', 0)->find('[itemprop="addressRegion"]', 0)->plaintext;
+            $rating_value = $raw_review->find('[itemprop="ratingValue"]', 0)->plaintext;
+            $reviews[] = array(
+                '@type' => 'Review',
+                'name' => trim($name),
+                'datePublished' => $date_published,
+                'description' => trim($description),
+                'author' => array(
+                    '@type' => 'Author',
+                    'name' => trim($author),
+                    'address' => array(
+                        '@type' => 'PostalAddress',
+                        'addressLocality' => trim($city),
+                        'addressRegion' => trim($state),
                     ),
-                );
-            };
-
-            self::cache($data);
-
-            return $data;
-
+                ),
+                'reviewRating' => array(
+                    '@type' => 'Rating',
+                    'ratingValue' => trim($rating_value),
+                ),
+            );
         }
 
-        private static function cache($data = null) {
+        $raw_checkins = $dom->find('[itemtype="http://schema.org/UserCheckins"]');
+        $checkins = array();
 
-            if (!$data) {
-                $data = self::get_remote_data();
-            }
-
-            return set_transient(self::$transient, $data, 3 * 60 * 60);
-
+        foreach ($raw_checkins as $raw_checkin) {
+            $name = $raw_checkin->find('[itemprop="name"]', 0)->content;
+            $start_date = $raw_checkin->find('[itemprop="startDate"]', 0)->datetime;
+            $attendees = $raw_checkin->find('[itemprop="attendees"]', 0)->plaintext;
+            $description = $raw_checkin->find('[itemprop="description"]', 0)->plaintext;
+            $raw_address_array = $raw_checkin->find('[itemprop="address"]', 0)->find('span');
+            $street_address = $raw_address_array[0]->plaintext;
+            $city = $raw_address_array[1]->plaintext;
+            $state = $raw_address_array[2]->plaintext;
+            $postal_code = $raw_address_array[3]->plaintext;
+            $latitude = $raw_checkin->find('[itemprop="latitude"]', 0)->content;
+            $longitude = $raw_checkin->find('[itemprop="longitude"]', 0)->content;
+            $image = $raw_checkin->find('[itemprop="image"]', 0)->src;
+            $checkins[] = array(
+                'name' => trim($name),
+                'startDate' => trim($start_date),
+                'attendees' => trim($attendees),
+                'description' => trim($description),
+                'location' => array(
+                    '@type' => 'Place',
+                    'address' => array(
+                        '@type' => 'PostalAddresss',
+                        'streetAddress' => trim($street_address),
+                        'addressLocality' => trim($city),
+                        'addressRegion' => trim($state),
+                        'postalCode' => trim($postal_code),
+                    ),
+                    'geo' => array(
+                        '@type' => 'GeoCoordinates',
+                        'latitude' => trim($latitude),
+                        'longitude' => trim($longitude),
+                    ),
+                ),
+                'image' => $image,
+            );
         }
 
-        private static function get_cache() {
+        $data = array(
+            'reviews' => $reviews,
+            'checkins' => $checkins,
+        );
 
-            return get_transient(self::$transient);
-
-        }
-
-        private static function clear_cache() {
-
-            return delete_transient(self::$transient);
-
-        }
-
-        public static function reset_cache() {
-
-            if (self::clear_cache()) {
-                return self::cache();
-            }
-
-            return false;
-        }
+        return $data;
 
     }
 
-endif;
+    public function get_data() {
+        $local_data = $this->get_local_data();
+        if ($local_data) {
+            return $local_data;
+        }
+
+        $remote_data = $this->get_remote_data();
+        return $remote_data;
+    }
+
+    public function get_city_data($city) {
+        $data = $this->get_data();
+        if (!$data['cities'][$city]) {
+            return false;
+        }
+        return $this->get_remote_city_data($data['cities'][$city]['city'], $data['cities'][$city]['state']);
+    }
+
+    public function get_cities() {
+        $data = $this->get_data();
+        return $data['cities'];
+    }
+}

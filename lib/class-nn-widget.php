@@ -2,11 +2,17 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+use \lnb\core\NNApi;
+
 if( ! class_exists( 'NN_Static_Widget' ) ) :
 
 	class NN_Static_Widget {
 
-		function __construct() {
+		private $api = null;
+
+		function __construct( $api_object ) {
+
+			$this->api = $api_object;
 
 			add_shortcode( 'static-nn-widget', [ $this, 'get_html' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'register_styles' ] );
@@ -50,16 +56,16 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
 			global $post;
 			$html;
 
-			if( class_exists( 'NN_API' ) ) {
+			if( class_exists( '\lnb\core\NNApi' ) ) {
 
-				$nn_data = NN_API::get_data();
+				$nn_data = $this->api->get_data();
 
 			} else {
 
-				$html = "This widget requires the NN_API class";
+				$html = "This widget requires the NNApi class found in \lnb\core";
 			}
 
-			if( ! empty( $nn_data ) ) {
+			if( ! empty( $nn_data ) && ! is_wp_error( $nn_data ) ) {
 
                 wp_enqueue_style( 'lnb-reviews-widget-styles' );
 
@@ -70,7 +76,7 @@ if( ! class_exists( 'NN_Static_Widget' ) ) :
                     <h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
                     <?php endif; ?>
                     <?php echo file_get_contents( plugin_dir_path( dirname( __FILE__ ) ) . '/assets/svg-stars.svg' ); ?>
-					<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['rating']; ?> out of <?php echo $nn_data['count']; ?> reviews</span>
+					<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['aggregateRating']['ratingValue']; ?> out of <?php echo $nn_data['aggregateRating']['reviewCount']; ?> reviews</span>
 				</div>
 
 				<?php $html = ob_get_clean();
