@@ -27,14 +27,22 @@ class NNApiRoutes extends WP_REST_Controller {
 
     public function register_routes() {
         $version = '1';
-        $namespace = 'nn/';
+        $namespace = 'nn/v1';
         $routes = array(
             array(
-                'path' => 'v1',
+                'path' => '/overview',
                 'callback' => 'get_all_data'
             ),
             array(
-                'path' => 'v1/(?P<city>[\w\-]+)',
+                'path' => '/aggregate',
+                'callback' => 'get_aggregate_data'
+            ),
+            array(
+                'path' => '/cities',
+                'callback' => 'get_cities'
+            ),
+            array(
+                'path' => '/cities/(?P<city>[\w\-]+)',
                 'callback' => 'get_city_data'
             ),
         );
@@ -50,6 +58,17 @@ class NNApiRoutes extends WP_REST_Controller {
     public function get_all_data() {
         $response = $this->api->get_data();
         return new WP_REST_Response( $response, 200 );
+    }
+
+    public function get_aggregate_data() {
+        $response = $this->api->get_data()['aggregateRating'];
+        return new WP_REST_Response( $response, 200 );
+    }
+
+    public function get_cities() {
+        $response = $this->api->get_data();
+        $cities = $response['cities'];
+        return new WP_REST_Response( $cities, 200 );
     }
 
     public function get_city_data( \WP_REST_Request $request ) {

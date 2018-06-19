@@ -12,6 +12,7 @@ use \Sunra\PhpSimple\HtmlDomParser;
 
 class NNApi {
 
+    private $devMode = true;
     private $api_key = '';
     private $transient_key = '';
 
@@ -63,9 +64,10 @@ class NNApi {
             $raw_location_array = explode(',', $raw_location->plaintext);
             $city = $raw_location_array[0];
             $state = $raw_location_array[1];
-            $locations[sanitize_title($city)] = array(
-                'city' => $city,
-                'state' => $state,
+            $locations[] = array(
+                'slug' => sanitize_title($city),
+                'city' => trim($city),
+                'state' => trim($state),
             );
         }
 
@@ -82,9 +84,9 @@ class NNApi {
             $rating_value = $raw_review->find('[itemprop="ratingValue"]', 0)->plaintext;
             $reviews[] = array(
                 '@type' => 'Review',
-                'name' => trim($name),
+                'name' => html_entity_decode(trim($name)),
                 'datePublished' => $date_published,
-                'description' => trim($description),
+                'description' => html_entity_decode(trim($description)),
                 'author' => array(
                     '@type' => 'Author',
                     'name' => trim($author),
@@ -96,7 +98,7 @@ class NNApi {
                 ),
                 'reviewRating' => array(
                     '@type' => 'Rating',
-                    'ratingValue' => trim($rating_value),
+                    'ratingValue' => (float) trim($rating_value),
                 ),
             );
         }
@@ -106,8 +108,8 @@ class NNApi {
             'cities' => $locations,
             'aggregateRating' => array(
                 '@type' => 'AggregateRating',
-                'ratingValue' => $rating_value,
-                'reviewCount' => $review_count,
+                'ratingValue' => (float) trim($rating_value),
+                'reviewCount' => (int) trim($review_count),
             ),
             'reviews' => $reviews,
         );
@@ -132,9 +134,9 @@ class NNApi {
             $rating_value = $raw_review->find('[itemprop="ratingValue"]', 0)->plaintext;
             $reviews[] = array(
                 '@type' => 'Review',
-                'name' => trim($name),
+                'name' => html_entity_decode(trim($name)),
                 'datePublished' => $date_published,
-                'description' => trim($description),
+                'description' => html_entity_decode(trim($description)),
                 'author' => array(
                     '@type' => 'Author',
                     'name' => trim($author),
@@ -168,10 +170,10 @@ class NNApi {
             $longitude = $raw_checkin->find('[itemprop="longitude"]', 0)->content;
             $image = $raw_checkin->find('[itemprop="image"]', 0)->src;
             $checkins[] = array(
-                'name' => trim($name),
+                'name' => html_entity_decode(trim($name)),
                 'startDate' => trim($start_date),
                 'attendees' => trim($attendees),
-                'description' => trim($description),
+                'description' => html_entity_decode(trim($description)),
                 'location' => array(
                     '@type' => 'Place',
                     'address' => array(
@@ -201,9 +203,11 @@ class NNApi {
     }
 
     public function get_data() {
-        $local_data = $this->get_local_data();
-        if ($local_data) {
-            return $local_data;
+        if (!$this->devMode) {
+            $local_data = $this->get_local_data();
+            if ($local_data) {
+                return $local_data;
+            }
         }
 
         $remote_data = $this->get_remote_data();
@@ -212,10 +216,24 @@ class NNApi {
 
     public function get_city_data($city) {
         $data = $this->get_data();
-        if (!$data['cities'][$city]) {
+
+        $city_match = '';
+        foreach ($data['cities'] as $city_obj) {
+            if ($city_obj['slug'] == $city) {
+                $city_match = $city_obj;
+            }
+        }
+
+        if (!$city_match) {
             return false;
         }
-        return $this->get_remote_city_data($data['cities'][$city]['city'], $data['cities'][$city]['state']);
+        $api_response = $this->get_remote_city_data($city_match['city'], $city_match['state']);
+        $response['slug'] = $city_match['slug'];
+        $response['city'] = $city_match['city'];
+        $response['state'] = $city_match['state'];
+        $response['reviews'] = $api_response['reviews'];
+        $response['checkins'] = $api_response['checkins'];
+        return $response;
     }
 
     public function get_cities() {

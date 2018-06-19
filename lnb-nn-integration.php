@@ -15,7 +15,7 @@ use \lnb\core\NnApiRoutes;
 $nn_options = get_option('nearbynow_options');
 $apikey = $nn_options['text_string'];
 if ($apikey) {
-    $nn_api = new NNApi('40df4ca4-3d58-4bac-93ed-6f152bc08b08');
+    $nn_api = new NNApi('8a249b3e-d870-415b-8185-9c51c986aa93');
     $api_routes = NNApiRoutes::get_instance($nn_api);
 
     add_action('rest_api_init', [$api_routes, 'register_routes']);
