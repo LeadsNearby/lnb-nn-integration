@@ -41,7 +41,7 @@ class NNApi {
     }
 
     private function get_remote_city_data($city, $state) {
-        $response = wp_remote_get('https://api.sidebox.com/plugin/nearbyserviceareareviewcombo/?storefronttoken=' . $this->api_key . '&reviewcount=25&checkincount=25&city=' . trim($city) . '&state=' . trim($state));
+        $response = wp_remote_get('https://api.sidebox.com/plugin/nearbyserviceareareviewcombo/?storefronttoken=' . $this->api_key . '&reviewcount=25&checkincount=50&city=' . trim($city) . '&state=' . trim($state));
         if (is_wp_error($response)) {
             return $response;
         }
@@ -134,11 +134,11 @@ class NNApi {
             $rating_value = $raw_review->find('[itemprop="ratingValue"]', 0)->plaintext;
             $reviews[] = array(
                 '@type' => 'Review',
-                'name' => html_entity_decode(trim($name)),
+                'name' => html_entity_decode(trim($name), ENT_QUOTES),
                 'datePublished' => $date_published,
-                'description' => html_entity_decode(trim($description)),
+                'description' => html_entity_decode(trim($description), ENT_QUOTES),
                 'author' => array(
-                    '@type' => 'Author',
+                    '@type' => 'Person',
                     'name' => trim($author),
                     'address' => array(
                         '@type' => 'PostalAddress',
@@ -150,17 +150,25 @@ class NNApi {
                     '@type' => 'Rating',
                     'ratingValue' => trim($rating_value),
                 ),
+                // 'itemReviewed' => array(
+                //     '@type' => $company_itemtype,
+                //     'name' => $company_name
+                // )
             );
         }
 
         $raw_checkins = $dom->find('[itemtype="http://schema.org/UserCheckins"]');
         $checkins = array();
-
+        $checkin_count = 0;
         foreach ($raw_checkins as $raw_checkin) {
+            if ($checkin_count > 25) {
+                break;
+            }
             $name = $raw_checkin->find('[itemprop="name"]', 0)->content;
             $start_date = $raw_checkin->find('[itemprop="startDate"]', 0)->datetime;
             $attendees = $raw_checkin->find('[itemprop="attendees"]', 0)->plaintext;
             $description = $raw_checkin->find('[itemprop="description"]', 0)->plaintext;
+            if (empty($description)) {continue;}
             $raw_address_array = $raw_checkin->find('[itemprop="address"]', 0)->find('span');
             $street_address = $raw_address_array[0]->plaintext;
             $city = $raw_address_array[1]->plaintext;
@@ -170,14 +178,15 @@ class NNApi {
             $longitude = $raw_checkin->find('[itemprop="longitude"]', 0)->content;
             $image = $raw_checkin->find('[itemprop="image"]', 0)->src;
             $checkins[] = array(
-                'name' => html_entity_decode(trim($name)),
+                '@type' => 'UserCheckins',
+                'name' => html_entity_decode(trim($name), ENT_QUOTES),
                 'startDate' => trim($start_date),
                 'attendees' => trim($attendees),
-                'description' => html_entity_decode(trim($description)),
+                'description' => html_entity_decode(trim($description), ENT_QUOTES),
                 'location' => array(
                     '@type' => 'Place',
                     'address' => array(
-                        '@type' => 'PostalAddresss',
+                        '@type' => 'PostalAddress',
                         'streetAddress' => trim($street_address),
                         'addressLocality' => trim($city),
                         'addressRegion' => trim($state),
@@ -191,9 +200,25 @@ class NNApi {
                 ),
                 'image' => $image,
             );
+            $checkin_count++;
         }
 
         $data = array(
+            'company' => array(
+                'name' => $dom->find('[itemprop="name"]', 0)->content,
+                'type' => ltrim(parse_url($dom->find('div[itemtype]', 0)->itemtype, PHP_URL_PATH), '/'),
+                'url' => $dom->find('[itemprop="url"]', 0)->content,
+                'logo' => $dom->find('[itemprop="logo"]', 0)->content,
+                'address' => array(
+                    '@type' => 'PostalAddress',
+                    'name' => $dom->find('[itemprop="address"]', 0)->content,
+                ),
+            ),
+            'aggregateRating' => array(
+                '@type' => 'AggregateRating',
+                'ratingValue' => trim($dom->find('[itemprop="ratingValue"]', 0)->plaintext),
+                'reviewCount' => trim($dom->find('[itemprop="reviewCount"]', 0)->plaintext),
+            ),
             'reviews' => $reviews,
             'checkins' => $checkins,
         );
@@ -231,6 +256,8 @@ class NNApi {
         $response['slug'] = $city_match['slug'];
         $response['city'] = $city_match['city'];
         $response['state'] = $city_match['state'];
+        $response['company'] = $api_response['company'];
+        $response['aggregateRating'] = $api_response['aggregateRating'];
         $response['reviews'] = $api_response['reviews'];
         $response['checkins'] = $api_response['checkins'];
         return $response;
