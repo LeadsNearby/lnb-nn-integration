@@ -42,6 +42,10 @@ class NNApiRoutes extends WP_REST_Controller {
                 'callback' => 'get_cities'
             ),
             array(
+                'path' => '/cities/main',
+                'callback' => 'get_main_page_data'
+            ),
+            array(
                 'path' => '/cities/(?P<city>[\w\-]+)',
                 'callback' => 'get_city_data'
             ),
@@ -71,8 +75,42 @@ class NNApiRoutes extends WP_REST_Controller {
         return new WP_REST_Response( $cities, 200 );
     }
 
+    private function insert_location_data( $request, $string ) {
+        return str_replace( [ '{city}', '{state}', '{company}' ], [ $request['city'], $request['state'], get_bloginfo('name') ], $string );
+    }
+
+    public function get_main_page_data() {
+        if( !wp_get_theme( 'fire' )->exists() ) {
+            return false;
+        }
+        $data = $this->api->get_data();
+        $response = array(
+            'cities' => $data['cities']
+        );
+        // Add meta to response
+        $options = get_option( 'fire_options' );
+        $response['meta'] = array(
+            'title' => $this->insert_location_data($response, $options['nnMainMetaTitle']),
+            'desc' => $this->insert_location_data($response, $options['nnMainMetaDesc'])
+        );
+        // Add content to response
+        $response['content'] = $this->insert_location_data($response, $options['nnMainContent']);
+        return new WP_REST_Response( $response, 200 );
+    }
+
     public function get_city_data( \WP_REST_Request $request ) {
         $response = $this->api->get_city_data( $request['city'] );
+        if( wp_get_theme( 'fire' )->exists() ) {
+            // Add meta to response
+            $options = get_option( 'fire_options' );
+            $response['meta'] = array(
+                'title' => $this->insert_location_data($response, $options['nnMetaTitle']),
+                'desc' => $this->insert_location_data($response, $options['nnMetaDesc'])
+            );
+
+            // Add content to response
+            $response['content'] = $this->insert_location_data($response, $options['nnContent']);
+        }
         if( ! $response ) {
             return new WP_Error( 'rest_post_invalid_city', __('Invalid City'), array( 'status' => 404 ) );
         }
