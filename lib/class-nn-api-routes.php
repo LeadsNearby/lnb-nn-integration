@@ -68,15 +68,21 @@ class NNApiRoutes extends WP_REST_Controller {
         $response = $this->api->get_data()['aggregateRating'];
         return new WP_REST_Response( $response, 200 );
     }
+    
+    private function insert_location_data( $request, $string ) {
+        return str_replace( [ '{city}', '{state}', '{company}' ], [ $request['city'], $request['state'], get_bloginfo('name') ], $string );
+    }
 
     public function get_cities() {
         $response = $this->api->get_data();
         $cities = $response['cities'];
+        if( wp_get_theme( 'fire' )->exists() ) {
+            $options = get_option( 'fire_options' );        
+            foreach($cities as $index => $city) {
+                $cities[$index]['permalink'] = sanitize_title($this->insert_location_data( array( 'city' => $city['city'], 'state' => $city['state'] ), $options['nnSlugTemplate'] ));
+            }
+        }
         return new WP_REST_Response( $cities, 200 );
-    }
-
-    private function insert_location_data( $request, $string ) {
-        return str_replace( [ '{city}', '{state}', '{company}' ], [ $request['city'], $request['state'], get_bloginfo('name') ], $string );
     }
 
     public function get_main_page_data() {
@@ -87,12 +93,16 @@ class NNApiRoutes extends WP_REST_Controller {
         $response = array(
             'cities' => $data['cities']
         );
+        $options = get_option( 'fire_options' );        
+        foreach($response['cities'] as $index => $city) {
+            $response['cities'][$index]['permalink'] = sanitize_title($this->insert_location_data( array( 'city' => $city['city'], 'state' => $city['state'] ), $options['nnSlugTemplate'] ));
+        }
         // Add meta to response
-        $options = get_option( 'fire_options' );
         $response['meta'] = array(
             'title' => $this->insert_location_data($response, $options['nnMainMetaTitle']),
             'desc' => $this->insert_location_data($response, $options['nnMainMetaDesc'])
         );
+        $response['slug'] = $this->insert_location_data( array( 'city' => 'Main', 'state' => 'TA'), $options['nnMain'] );
         // Add content to response
         $response['content'] = $this->insert_location_data($response, $options['nnMainContent']);
         return new WP_REST_Response( $response, 200 );
@@ -107,6 +117,9 @@ class NNApiRoutes extends WP_REST_Controller {
                 'title' => $this->insert_location_data($response, $options['nnMetaTitle']),
                 'desc' => $this->insert_location_data($response, $options['nnMetaDesc'])
             );
+
+            $response['company']['priceRange'] = $options['priceRange'];
+            $response['company']['telephone'] = $options['phone'];
 
             // Add content to response
             $response['content'] = $this->insert_location_data($response, $options['nnContent']);
