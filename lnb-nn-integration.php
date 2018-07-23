@@ -12,10 +12,15 @@ require_once plugin_dir_path(__FILE__) . '/lib/class-nn-api-routes.php';
 use \lnb\core\NnApi;
 use \lnb\core\NnApiRoutes;
 
+$fire_options = get_option('fire_options');
 $nn_options = get_option('nearbynow_options');
-$apikey = $nn_options['text_string'];
+if (isset($fire_options['nnApiKey'])) {
+    $apikey = $fire_options['nnApiKey'];
+} else {
+    // $apikey = $nn_options['text_string'];
+}
 if ($apikey) {
-    $nn_api = new NNApi('8a249b3e-d870-415b-8185-9c51c986aa93');
+    $nn_api = new NNApi($apikey);
     $api_routes = NNApiRoutes::get_instance($nn_api);
 
     add_action('rest_api_init', [$api_routes, 'register_routes']);

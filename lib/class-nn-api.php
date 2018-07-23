@@ -30,7 +30,7 @@ class NNApi {
     }
 
     private function get_remote_data() {
-        $response = wp_remote_get('https://api.sidebox.com/plugin/nearbyserviceareareviewcombo/?storefronttoken=' . $this->api_key . '&reviewcount=50&reviewcityurl=cityurl&checkincount=0');
+        $response = wp_remote_get('https://api.sidebox.com/plugin/nearbyserviceareareviewcombo/?storefronttoken=' . $this->api_key . '&reviewcount=50&reviewcityurl=cityurl&checkincount=0', array('timeout' => '8'));
         if (is_wp_error($response)) {
             return $response;
         }
@@ -105,12 +105,19 @@ class NNApi {
 
         $data = array(
             'name' => $company_name,
-            'cities' => $locations,
+            'type' => ltrim(parse_url($dom->find('div[itemtype]', 0)->itemtype, PHP_URL_PATH), '/'),
+            'url' => $dom->find('[itemprop="url"]', 0)->content,
+            'logo' => $dom->find('[itemprop="logo"]', 0)->content,
+            'address' => array(
+                '@type' => 'PostalAddress',
+                'name' => $dom->find('[itemprop="address"]', 0)->content,
+            ),
             'aggregateRating' => array(
                 '@type' => 'AggregateRating',
                 'ratingValue' => (float) trim($rating_value),
                 'reviewCount' => (int) trim($review_count),
             ),
+            'cities' => $locations,
             'reviews' => $reviews,
         );
 

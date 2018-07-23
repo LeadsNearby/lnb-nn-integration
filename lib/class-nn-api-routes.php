@@ -61,6 +61,13 @@ class NNApiRoutes extends WP_REST_Controller {
 
     public function get_all_data() {
         $response = $this->api->get_data();
+
+        if( wp_get_theme( 'fire' )->exists() ) {
+            $options = get_option( 'fire_options' );
+            $response['company']['priceRange'] = $options['priceRange'];
+            $response['company']['telephone'] = $options['phone'];
+        }
+
         return new WP_REST_Response( $response, 200 );
     }
 
