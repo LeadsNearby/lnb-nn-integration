@@ -50,6 +50,19 @@ class NNApi {
         return $data;
     }
 
+    private function sort_cities_array_by_rcount($a, $b) {
+        // if(substr($a['slug'], 0, 1) === substr($b['slug'], 0, 1) ) {
+        // }
+        return $a['reviewCount'] < $b['reviewCount'];
+    }
+
+    private function sort_cities_array_alpha($a, $b) {
+        if ($a['reviewCount'] === $b['reviewCount']) {
+            return $a['slug'] > $b['slug'];
+        }
+
+    }
+
     private function parse_remote_data($raw_data) {
 
         $dom = HtmlDomParser::str_get_html($raw_data);
@@ -57,10 +70,10 @@ class NNApi {
         $company_name = $dom->find('[itemprop="name"]', 0)->content;
         $rating_value = $dom->find('[itemprop="ratingValue"]', 0)->plaintext;
         $review_count = $dom->find('[itemprop="reviewCount"]', 0)->plaintext;
-
+        $rawer_locations = $dom->find('.nn-samap-topcity');
         $raw_locations = $dom->find('.nn-samap-topcity > a');
         $locations = array();
-        foreach ($raw_locations as $raw_location) {
+        foreach ($raw_locations as $i => $raw_location) {
             $raw_location_array = explode(',', $raw_location->plaintext);
             $city = $raw_location_array[0];
             $state = $raw_location_array[1];
@@ -68,8 +81,11 @@ class NNApi {
                 'slug' => sanitize_title($city),
                 'city' => trim($city),
                 'state' => trim($state),
+                'reviewCount' => trim(preg_replace('/[^0-9]+/', '', $rawer_locations[$i]->plaintext)),
             );
         }
+        usort($locations, [$this, 'sort_cities_array_by_rcount']);
+        usort($locations, [$this, 'sort_cities_array_alpha']);
 
         $raw_reviews = $dom->find('[itemprop="review"]');
         $reviews = array();
