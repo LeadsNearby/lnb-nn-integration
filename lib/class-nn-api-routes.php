@@ -110,8 +110,10 @@ class NNApiRoutes extends WP_REST_Controller {
             'desc' => $this->insert_location_data($response, $options['nnMainMetaDesc'])
         );
         $response['slug'] = $this->insert_location_data( array( 'city' => 'Main', 'state' => 'TA'), $options['nnMain'] );
-        // Add content to response
+        // Add title to response
         $response['content'] = $this->insert_location_data($response, $options['nnMainContent']);
+        // Add content to response
+        $response['title'] = $this->insert_location_data($response, $options['nnMainTitle']);
         return new WP_REST_Response( $response, 200 );
     }
 
@@ -128,6 +130,8 @@ class NNApiRoutes extends WP_REST_Controller {
             $response['company']['priceRange'] = $options['priceRange'];
             $response['company']['telephone'] = $options['phone'];
 
+            // Add page title to response
+            $response['title'] = $this->insert_location_data($response, $options['nnPageTitle']);
             // Add content to response
             $response['content'] = $this->insert_location_data($response, $options['nnContent']);
         }

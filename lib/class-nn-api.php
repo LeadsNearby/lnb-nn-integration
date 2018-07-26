@@ -51,8 +51,6 @@ class NNApi {
     }
 
     private function sort_cities_array_by_rcount($a, $b) {
-        // if(substr($a['slug'], 0, 1) === substr($b['slug'], 0, 1) ) {
-        // }
         return $a['reviewCount'] < $b['reviewCount'];
     }
 
