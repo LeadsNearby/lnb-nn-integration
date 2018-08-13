@@ -13,7 +13,6 @@
     max-width: 450px;
     border: 1px solid #ccc;
     box-shadow: 0px 5px 14px #ccc;
-	background: var(--background) !important;
 	width:100%;
 }
 .lnbTestimonialsWidget__review span {
@@ -26,7 +25,7 @@
 .lnbTestimonialsWidget__starsContainer {
 	margin-bottom: 0;
     padding: 2rem;
-    background-color: #efefef;
+    background: var(--background) !important;
     border-bottom: 1px solid #ccc;
     text-align: center;
 }
