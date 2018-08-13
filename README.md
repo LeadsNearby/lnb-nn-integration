@@ -35,7 +35,7 @@ Shortcode: **[static-nn-widget]**
 
 #### Nearby Now "Dynamic Testimonials" Widget
 
-A customized testimonials widget which displays the client's three moste recent five star reviews and uses the NN_API class.
+A customized testimonials widget which displays the client's three most recent five star reviews and uses the NN_API class.
 
 Shortcode: **[dyn-test-widget]**
 
