@@ -32,3 +32,15 @@ Shortcode: **[static-nn-widget]**
     * inline
 * accent - #000 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
 * stars - #fee300 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+
+#### Nearby Now "Dynamic Testimonials" Widget
+
+A customized testimonials widget which displays the client's three moste recent five star reviews and uses the NN_API class.
+
+Shortcode: **[dyn-test-widget]**
+
+**Shortcode Attributes**
+
+* accent - #000 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+* stars - #fee300 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+** background - #efefef is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
