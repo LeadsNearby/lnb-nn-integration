@@ -1,0 +1,68 @@
+.lnbTestimonialsWidget {
+	display: grid;
+    grid-gap: 4rem;
+    grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+    grid-auto-flow: dense;
+    margin-bottom: 1em;
+	--background:#fff;
+	--accent-color:#fff;
+	color:var(--accent-color);
+}
+.lnbTestimonialsWidget__review {
+	margin: 0 auto;
+    max-width: 450px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 5px 14px #ccc;
+	background: var(--background) !important;
+	width:100%;
+}
+.lnbTestimonialsWidget__review span {
+	display: block;
+    margin-bottom: 1em;
+}
+.lnbTestimonialsWidget__review span:last-child {
+	margin-bottom:0;
+}
+.lnbTestimonialsWidget__starsContainer {
+	margin-bottom: 0;
+    padding: 2rem;
+    background-color: #efefef;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+.lnbTestimonialsWidget .lnbReviewsWidget__stars {
+	display: inline-block;
+    max-width: 125px;
+	margin:0;
+}
+.lnbTestimonialsWidget .lnbReviewsWidget__stars .star {
+	fill:transparent;
+    stroke:#000;
+    stroke-width:.2083;
+    stroke-miterlimit:10;
+}
+.lnbTestimonialsWidget__content {
+	padding:2rem;
+}
+.lnbTestimonialsWidget__author {
+	margin-bottom:1rem;
+	font-weight:700;
+}
+.lnbTestimonialsWidget__authorText {
+	display: inline-block !important;
+    padding-right: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ccc;
+    color: #1a1a1a;
+    font-weight: 700;
+	font-size:20px;
+}
+.lnbTestimoniasWidget__meta {
+	font-size:14px;
+}
+.lnbTestimoniasWidget__meta > span {
+	display:inline-block;
+}
+.lnbTestimoniasWidget__meta > span svg {
+	margin-right:5px;
+}
