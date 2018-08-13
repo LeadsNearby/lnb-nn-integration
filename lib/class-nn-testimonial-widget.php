@@ -26,7 +26,7 @@ if( ! class_exists( 'NN_Testimonial_Widget' ) ) :
 					'size' => 'medium',
 					'accent' => '#000',
 					'stars' => '#faab5b',
-					'background' => '#fff',
+					'background' => '#efefef',
 				),
 				$shortcode_atts,
 				'dyn-test-widget'
