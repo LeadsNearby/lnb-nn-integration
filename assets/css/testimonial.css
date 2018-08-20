@@ -6,7 +6,8 @@
     margin-bottom: 1em;
 	--background:#fff;
 	--accent-color:#fff;
-	color:var(--accent-color);
+	--reviewbg:#000;
+	color:var(--textbody);
 }
 .lnbTestimonialsWidget__review {
 	margin: 0 auto;
@@ -34,11 +35,12 @@
     max-width: 125px;
 	margin:0;
 }
-.lnbTestimonialsWidget .lnbReviewsWidget__stars .star {
-	fill:transparent;
-    stroke:#000;
-    stroke-width:.2083;
-    stroke-miterlimit:10;
+.lnbReviewsWidget__stars path {
+    fill: var(--stars-color);
+    stroke: var(--stars-color);
+}
+.lnbTestimonialsWidget__review {
+	background:var(--reviewbg);
 }
 .lnbTestimonialsWidget__content {
 	padding:2rem;
@@ -52,7 +54,7 @@
     padding-right: 1rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #ccc;
-    color: #1a1a1a;
+    color: var(--authortext);
     font-weight: 700;
 	font-size:20px;
 }
