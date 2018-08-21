@@ -24,9 +24,11 @@ if( ! class_exists( 'NN_Testimonial_Widget' ) ) :
                     'name' => 'true',
 					'type' => 'block',
 					'size' => 'medium',
-					'accent' => '#000',
+					'authortext' => '#000',
+					'textbody' => '#000',
 					'stars' => '#faab5b',
 					'background' => '#efefef',
+					'reviewbg' => '#000',
 				),
 				$shortcode_atts,
 				'dyn-test-widget'
@@ -35,9 +37,11 @@ if( ! class_exists( 'NN_Testimonial_Widget' ) ) :
 			$type = ! empty( $type ) ? $type : 'block';
 
 			$css_widget_vars = array(
-				'--accent-color' => $accent,
+				'--textbody' => $textbody,
 				'--stars-color' => $stars,
 				'--background' => $background,
+				'--reviewbg' => $reviewbg,
+				'--authortext' => $authortext,
 			);
 
 			$css_widget_string = '';
