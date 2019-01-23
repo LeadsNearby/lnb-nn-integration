@@ -24,7 +24,7 @@ if ($apikey) {
     $api_routes = NNApiRoutes::get_instance($nn_api);
 
     add_action('rest_api_init', [$api_routes, 'register_routes']);
-    // add_action( 'save_post', array( 'NN_API', 'reset_cache' ) );
+    // add_action('save_post', array($nn_api, 'clear_cache'));
     // add_action( 'wp_update_nav_menu', array( 'NN_API', 'reset_cache' ) );
     add_action('after_rocket_clean_cache_dir', array($nn_api, 'clear_cache'));
 
