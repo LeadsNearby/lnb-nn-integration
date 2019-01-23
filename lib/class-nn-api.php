@@ -12,7 +12,7 @@ use \Sunra\PhpSimple\HtmlDomParser;
 
 class NNApi {
 
-    private $devMode = true;
+    private $devMode = false;
     private $api_key = '';
     private $transient_key = '';
 
