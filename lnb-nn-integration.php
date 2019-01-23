@@ -17,7 +17,7 @@ $nn_options = get_option('nearbynow_options');
 if (isset($fire_options['nnApiKey'])) {
     $apikey = $fire_options['nnApiKey'];
 } else {
-    // $apikey = $nn_options['text_string'];
+    $apikey = $nn_options['text_string'];
 }
 if ($apikey) {
     $nn_api = new NNApi($apikey);
