@@ -12,7 +12,14 @@ This plugin is designed to use the server to get and cache data from the Nearby 
 
 ### What's Included
 
-#### NN_API Class
+#### NNApi Class
+
+**Methods**
+
+* get_data()
+* clear_cache()
+
+#### NN_API Class (deprecated)
 
 Publicly accessible functions:
 
