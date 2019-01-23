@@ -30,6 +30,8 @@ if ($apikey) {
 
     require_once plugin_dir_path(__FILE__) . '/lib/class-nn-widget.php';
     new NN_Static_Widget($nn_api);
+    require_once plugin_dir_path(__FILE__) . '/lib/class-nn-testimonial-widget.php';
+    new NN_Testimonial_Widget();
 }
 
 add_action('admin_init', function () {
