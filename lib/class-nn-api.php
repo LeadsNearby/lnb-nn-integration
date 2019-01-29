@@ -66,7 +66,7 @@ class NNApi {
         $dom = HtmlDomParser::str_get_html($raw_data);
 
         $company_name = $dom->find('[itemprop="name"]', 0)->content;
-        $rating_value = $dom->find('[itemprop="ratingValue"]', 0)->plaintext;
+        $overall_rating_value = $dom->find('[itemprop="ratingValue"]', 0)->plaintext;
         $review_count = $dom->find('[itemprop="reviewCount"]', 0)->plaintext;
         $rawer_locations = $dom->find('.nn-samap-topcity');
         $raw_locations = $dom->find('.nn-samap-topcity > a');
@@ -128,7 +128,7 @@ class NNApi {
             ),
             'aggregateRating' => array(
                 '@type' => 'AggregateRating',
-                'ratingValue' => (float) trim($rating_value),
+                'ratingValue' => (float) trim($overall_rating_value),
                 'reviewCount' => (int) trim($review_count),
             ),
             'cities' => $locations,
