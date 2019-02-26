@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
     exit('Direct script access denied.');
 }
 
+use \lnb\nn\ApiCache as ApiCache;
 use \stdClass;
 use \WP_Error;
 use \WP_REST_Controller;
@@ -85,6 +86,10 @@ class NNApiRoutes extends WP_REST_Controller {
     }
 
     public function get_cities() {
+        $cache = ApiCache::get_cache('cities');
+        if ($cache) {
+            return $this->return_cache_response($cache);
+        }
         $response = $this->api->get_data();
         $cities = $response['cities'];
         if (wp_get_theme('fire')->exists()) {
@@ -93,10 +98,16 @@ class NNApiRoutes extends WP_REST_Controller {
                 $cities[$index]['permalink'] = sanitize_title($this->insert_location_data(array('city' => $city['city'], 'state' => $city['state']), $options['nnSlugTemplate']));
             }
         }
+        ApiCache::set_cache('cities', $cities, 24 * HOUR_IN_SECONDS);
         return new WP_REST_Response($cities, 200);
     }
 
     public function get_main_page_data() {
+        $cache = ApiCache::get_cache('main_page');
+        if ($cache) {
+            return $this->return_cache_response($cache);
+        }
+
         if (!wp_get_theme('fire')->exists()) {
             return false;
         }
@@ -118,10 +129,16 @@ class NNApiRoutes extends WP_REST_Controller {
         $response['content'] = $this->insert_location_data($response, $options['nnMainContent']);
         // Add content to response
         $response['title'] = $this->insert_location_data($response, $options['nnMainTitle']);
+
+        ApiCache::set_cache('main_page', $response, 24 * HOUR_IN_SECONDS);
         return new WP_REST_Response($response, 200);
     }
 
     public function get_city_data(\WP_REST_Request $request) {
+        $cache = ApiCache::get_cache($request['city']);
+        if ($cache) {
+            return $this->return_cache_response($cache);
+        }
         $response = $this->api->get_city_data($request['city']);
         if (wp_get_theme('fire')->exists()) {
             // Add meta to response
@@ -142,7 +159,14 @@ class NNApiRoutes extends WP_REST_Controller {
         if (!$response) {
             return new WP_Error('rest_post_invalid_city', __('Invalid City'), array('status' => 404));
         }
+        ApiCache::set_cache($request['city'], $response, 24 * HOUR_IN_SECONDS);
         return new WP_REST_Response($response, 200);
+    }
+
+    private function return_cache_response($cache) {
+        $response = new WP_REST_Response($cache, 200);
+        $response->header('X-Api-Cache', 'hit');
+        return $response;
     }
 
 }

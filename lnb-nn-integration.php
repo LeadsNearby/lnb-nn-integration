@@ -9,6 +9,7 @@ Author: LeadsNearby (Andrew Gillingham)
 
 require_once plugin_dir_path(__FILE__) . '/lib/class-nn-api.php';
 require_once plugin_dir_path(__FILE__) . '/lib/class-nn-api-routes.php';
+require_once plugin_dir_path(__FILE__) . '/lib/class-nn-api-routes-cache.php';
 use \lnb\core\NnApi;
 use \lnb\core\NnApiRoutes;
 
