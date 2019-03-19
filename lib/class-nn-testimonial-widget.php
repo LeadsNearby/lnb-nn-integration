@@ -38,6 +38,7 @@ if (!class_exists('NN_Testimonial_Widget')):
                     'stars' => '#faab5b',
                     'background' => '#efefef',
                     'reviewbg' => '#000',
+					'reviewbody' => 'true',
                 ),
                 $shortcode_atts,
                 'dyn-test-widget'
@@ -92,7 +93,9 @@ if (!class_exists('NN_Testimonial_Widget')):
 							<div class="lnbTestimonialsWidget__content">
 								<span class="lnbTestimonialsWidget__author"><span class="lnbTestimonialsWidget__authorText"><?php echo $review['author']['name']; ?></span></span>
 								<span class="lnbTestimonialsWidget__name"><?php echo $review['name']; ?></span>
-
+								<?php if ($reviewbody !== "false"): ?>
+								<span class="lnbTestimonialsWidget__description"><?php echo $review['description']; ?></span>
+								<?php endif;?>
 								<span class="lnbTestimoniasWidget__meta"><span class="lnbTestimonialsWidget__metaLocation"><i class="fal fa-map-pin"></i><?php echo $review['author']['address']['addressLocality']; ?></span></span>
 							</div>
 						</div>
