@@ -80,7 +80,7 @@ if (!class_exists('NN_Static_Widget')):
 	                    <h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
 	                    <?php endif;?>
                     <?php echo file_get_contents(plugin_dir_path(dirname(__FILE__)) . '/assets/svg-stars.svg'); ?>
-				<?php if ($reviewdata !== "false"): ?>		
+				<?php if ($nn_data['aggregateRating']['reviewCount'] > 0 && $reviewdata !== "false"): ?>		
 					<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['aggregateRating']['ratingValue']; ?> out of <?php echo $nn_data['aggregateRating']['reviewCount']; ?> reviews</span>
 				<?php endif;?>
                                        </div>
