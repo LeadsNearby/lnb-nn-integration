@@ -128,7 +128,7 @@ class NNApi {
             ),
             'aggregateRating' => array(
                 '@type' => 'AggregateRating',
-                'ratingValue' => (float) trim($overall_rating_value),
+                'ratingValue' => number_format((float) $overall_rating_value, 1, '.', ''),
                 'reviewCount' => (int) trim($review_count),
             ),
             'cities' => $locations,
