@@ -31,6 +31,7 @@ if (!class_exists('NN_Static_Widget')):
             extract(shortcode_atts(
                 array(
                     'name' => 'true',
+		    'reviewdata' => 'true',	
                     'type' => 'block',
                     'size' => 'medium',
                     'accent' => '#000',
@@ -79,8 +80,10 @@ if (!class_exists('NN_Static_Widget')):
 	                    <h3 class="lnbReviewsWidget__title"><?php echo $nn_data['name']; ?></h3>
 	                    <?php endif;?>
                     <?php echo file_get_contents(plugin_dir_path(dirname(__FILE__)) . '/assets/svg-stars.svg'); ?>
+				<?php if ($nn_data['aggregateRating']['reviewCount'] > 0 && $reviewdata !== "false"): ?>		
 					<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['aggregateRating']['ratingValue']; ?> out of <?php echo $nn_data['aggregateRating']['reviewCount']; ?> reviews</span>
-				</div>
+				<?php endif;?>
+                                       </div>
 
 				<?php $html = ob_get_clean();
 
