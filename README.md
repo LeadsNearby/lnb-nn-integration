@@ -50,4 +50,5 @@ Shortcode: **[dyn-test-widget]**
 
 * accent - #000 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
 * stars - #fee300 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
-* background - #efefef is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+* background - #efefef is the default, attribute accepts any HEX, RGB, RGBA or HTML color value, changes the top(stars) section
+* reviewbg - attribute accepts any HEX, RGB, RGBA or HTML color value, changes the review body section
