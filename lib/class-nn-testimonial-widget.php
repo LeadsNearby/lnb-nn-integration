@@ -30,28 +30,15 @@ if (!class_exists('NN_Testimonial_Widget')):
 
             extract(shortcode_atts(
                 array(
-                    'name' => 'true',
-                    'type' => 'block',
-                    'size' => 'medium',
-                    'authortext' => '#000',
-                    'textbody' => '#000',
                     'stars' => '#faab5b',
-                    'background' => '#efefef',
-                    'reviewbg' => '#000',
-					'reviewbody' => 'true',
+                    'review_count' => 3,
                 ),
                 $shortcode_atts,
                 'dyn-test-widget'
             ));
 
-            $type = !empty($type) ? $type : 'block';
-
             $css_widget_vars = array(
-                '--textbody' => $textbody,
                 '--stars-color' => $stars,
-                '--background' => $background,
-                '--reviewbg' => $reviewbg,
-                '--authortext' => $authortext,
             );
 
             $css_widget_string = '';
@@ -67,37 +54,28 @@ if (!class_exists('NN_Testimonial_Widget')):
             $html;
 
             if (class_exists('\lnb\core\NNApi')) {
-
                 $nn_data = $this->api->get_data();
-
             } else {
-
                 $html = "This widget requires the NN_API class";
             }
 
             if (!empty($nn_data)) {
 
-                $fiveStarReviews = array_values(array_filter($nn_data['reviews'], [$this, 'findFive']));
+                $fiveStarReviews = array_values(array_filter($nn_data['reviews'], [$this, 'findReviews']));
 
                 wp_enqueue_style('dyn-test-widget-styles');
 
                 ob_start();?>
-				<pre><?php /*print_r ($nn_data); */?></pre>
-				<div class="lnbTestimonialsWidget lnbTestimonialsWidget--<?php echo $type; ?>"<?php if ($css_widget_string) {?> style="<?php echo $css_widget_string; ?>"<?php }?>>
+
+				<div class="lnbTestimonialsWidget"<?php if ($css_widget_string) {?> style="<?php echo $css_widget_string; ?>"<?php }?>>
 				<?php foreach ($fiveStarReviews as $index => $review) {
-                    if ($index == 3) {break;}?>
+                    if ($index == $review_count) {break;}?>
 						<div class="lnbTestimonialsWidget__review">
-							<span class="lnbTestimonialsWidget__starsContainer">
-								<?php echo file_get_contents(plugin_dir_path(dirname(__FILE__)) . '/assets/svg-stars.svg'); ?>
-							</span>
-							<div class="lnbTestimonialsWidget__content">
-								<span class="lnbTestimonialsWidget__author"><span class="lnbTestimonialsWidget__authorText"><?php echo $review['author']['name']; ?></span></span>
-								<span class="lnbTestimonialsWidget__name"><?php echo $review['name']; ?></span>
-								<?php if ($reviewbody !== "false"): ?>
-								<span class="lnbTestimonialsWidget__description"><?php echo $review['description']; ?></span>
-								<?php endif;?>
-								<span class="lnbTestimoniasWidget__meta"><span class="lnbTestimonialsWidget__metaLocation"><i class="fal fa-map-pin"></i><?php echo $review['author']['address']['addressLocality']; ?></span></span>
-							</div>
+                            <span class="lnbTestimonialsWidget__name"><?php echo $review['name']; ?></span>
+                            <?php echo file_get_contents(plugin_dir_path(dirname(__FILE__)) . '/assets/svg-stars.svg'); ?>
+                            <span class="lnbTestimonialsWidget__description"><?php echo $review['description']; ?></span>
+                            <span class="lnbTestimonialsWidget__author"><span class="lnbTestimonialsWidget__authorText"><?php echo $review['author']['name']; ?></span></span>
+                            <span class="lnbTestimoniasWidget__meta"><span class="lnbTestimonialsWidget__metaLocation"><i class="far fa-map-pin"></i><?php echo $review['author']['address']['addressLocality']; ?></span></span>
 						</div>
 					<?php }?>
 				</div>
@@ -113,8 +91,8 @@ if (!class_exists('NN_Testimonial_Widget')):
             return $html;
 
         }
-        public function findFive($review) {
-            return ($review['reviewRating']['ratingValue'] == 5);
+        public function findReviews($review) {
+            return ($review['reviewRating']['ratingValue'] == 5 && !empty($review['description']) && str_word_count($review['description']) > 20 && str_word_count($review['description']) < 60);
         }
     }
 
