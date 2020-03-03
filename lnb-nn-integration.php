@@ -3,7 +3,7 @@
 /*
 Plugin Name: LeadsNearby Nearby Now Stynamic Integration
 Description: Includes an API class that gets and stores Nearby Now data in the database for easy retrieval. Also includes a widget.
-Version: 2.3.0
+Version: 2.4.0
 Author: LeadsNearby (Andrew Gillingham)
  */
 
@@ -66,7 +66,7 @@ function wpseo_filter_in_nn_data($graph_piece) {
     return $graph_piece;
 }
 
-if(wp_get_theme()->get('Template') == 'hypercore') {
+if (wp_get_theme()->get('Template') == 'hypercore') {
     add_filter('wpseo_schema_organization', 'wpseo_filter_in_nn_data', 15);
 }
 
