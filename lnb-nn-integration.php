@@ -54,6 +54,11 @@ function wpseo_filter_in_nn_data($graph_piece) {
     $nn_api = $nn_api = new NNApi($nn_api_ley);
     $nn_data = $nn_api->get_data();
 
+    // Exit early if Nearby Now isn't returning data
+    if (is_wp_error($nn_data)) {
+        return $graph_piece;
+    }
+
     // Override type with type from nn
     if ($nn_data['type'] !== $graph_piece['@type']) {
         $graph_piece['@type'] = $nn_data['type'];
