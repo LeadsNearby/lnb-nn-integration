@@ -60,7 +60,7 @@ function wpseo_filter_in_nn_data($graph_piece) {
     }
 
     // Override type with type from nn
-    if ($nn_data['type'] !== $graph_piece['@type']) {
+    if (isset($nn_data['type']) && $nn_data['type'] !== $graph_piece['@type']) {
         $graph_piece['@type'] = $nn_data['type'];
     }
 
