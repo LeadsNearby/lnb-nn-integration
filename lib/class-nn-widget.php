@@ -31,7 +31,8 @@ if (!class_exists('NN_Static_Widget')):
             extract(shortcode_atts(
                 array(
                     'name' => 'true',
-		    'reviewdata' => 'true',	
+                    'reviewdata' => 'true',	
+                    'ratingtext' => 'Rated {rating} out of {review-count} reviews',
                     'type' => 'block',
                     'size' => 'medium',
                     'accent' => '#000',
@@ -73,6 +74,18 @@ if (!class_exists('NN_Static_Widget')):
 
                 wp_enqueue_style('lnb-reviews-widget-styles');
 
+                $rating_string = str_replace(
+                    array(
+                        '{rating}',
+                        '{review-count}'
+                    ),
+                    array(
+                        $nn_data['aggregateRating']['ratingValue'],
+                        $nn_data['aggregateRating']['reviewCount']
+                    ),
+                    $ratingtext
+                );
+
                 ob_start();?>
 
 					<div class="lnbReviewsWidget lnbReviewsWidget--<?php echo $type; ?>"<?php if ($css_widget_string) {?> style="<?php echo $css_widget_string; ?>"<?php }?>>
@@ -81,7 +94,7 @@ if (!class_exists('NN_Static_Widget')):
 	                    <?php endif;?>
                     <?php echo file_get_contents(plugin_dir_path(dirname(__FILE__)) . '/assets/svg-stars.svg'); ?>
 				<?php if ($nn_data['aggregateRating']['reviewCount'] > 0 && $reviewdata !== "false"): ?>		
-					<span class="lnbReviewsWidget__data">Rated <?php echo $nn_data['aggregateRating']['ratingValue']; ?> out of <?php echo $nn_data['aggregateRating']['reviewCount']; ?> reviews</span>
+					<span class="lnbReviewsWidget__data"><?php echo $rating_string; ?></span>
 				<?php endif;?>
                                        </div>
 
