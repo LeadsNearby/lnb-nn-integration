@@ -1,6 +1,7 @@
 <?php
 
 function paginated_serviceareareviewcombo_html($atts) {
+
     $shortcode_atts = shortcode_atts(array(
         'state' => '',
         'city' => '',
