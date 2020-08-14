@@ -35,6 +35,17 @@ function paginated_serviceareareviewcombo_html($atts) {
     }
 
     $nn_string = do_shortcode('[serviceareareviewcombo ' . $att_string . ']');
+
+    // Don't paginate non city or state pages
+    if (empty($shortcode_atts['city']) && empty($shortcode_atts['state'])) {
+        return $nn_string;
+    }
+
+    // Don't paginate pages with reviewcount 0
+    if ($shortcode_atts['review_count'] <= 0) {
+        return $nn_string;
+    }
+
     preg_match('/based on <span[\s]+?>([0-9]+)<\/span>/', $nn_string, $_number_of_reviews);
     $number_of_reviews = isset($_number_of_reviews[1]) ? $_number_of_reviews[1] : 0;
     if (($number_of_reviews - $review_offset) / ($page * $shortcode_atts['reviewcount'] + $review_offset) > 1) {
