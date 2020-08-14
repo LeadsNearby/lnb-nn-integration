@@ -42,7 +42,7 @@ function paginated_serviceareareviewcombo_html($atts) {
     }
 
     // Don't paginate pages with reviewcount 0
-    if ($shortcode_atts['review_count'] <= 0) {
+    if ($shortcode_atts['reviewcount'] <= 0) {
         return $nn_string;
     }
 
