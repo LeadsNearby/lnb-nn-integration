@@ -40,6 +40,14 @@ Shortcode: **[static-nn-widget]**
 * accent - #000 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
 * stars - #fee300 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
 
+Shortcode: **[static-nn-badge]**
+
+**Shortcode Attributes**
+* name - company name shows by default, set to "false" to hide, showing only stars and rating data
+* accent - #000 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+* stars - #fee300 is the default, attribute accepts any HEX, RGB, RGBA or HTML color value
+* url - enter the url that you want the badge to point to ex: https://site-name/slug/
+
 #### Nearby Now "Dynamic Testimonials" Widget
 
 A customized testimonials widget which displays the client's three most recent five star reviews and uses the NN_API class.

@@ -43,3 +43,62 @@
     margin-left: 4px;
     margin-right: 4px;
 }
+.lnbNNBadge .nn-badge-container {
+	align-items:center;
+    display: inline-grid;
+    grid-template-columns: 25% 75%;
+	padding:8px;
+}
+.lnbNNBadge .nn-badge-container img {
+    width: 100%;
+}
+.lnbNNBadge .nn-badge-title {
+    font-size: 14px;
+}
+.lnbNNBadge span.lnbReviewsWidget__data {
+    font-size: 20px;
+    color: #e7701b;
+}
+.lnbNNBadge .lnbReviewsWidget__stars path {
+    fill: #e7701b;
+    stroke: #e7701b;
+}
+.lnbNNBadge .rating-container {
+    grid-template-columns: 20% 80%;
+    display: inline-grid;
+    justify-items: center;
+    align-items: center;
+}
+.lnbNNBadge.lnbReviewsWidget--block {
+    max-width: 235px;
+	min-width: 215px;
+	width:100%;
+    border-top: 6px solid orange;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+    border-bottom: 1px solid #ddd;
+    z-index: 999;
+    color: #333;
+    background: #fff;
+    border-radius: 0 0 2px 2px;
+    transition: all .2s ease-in-out;	
+}
+.lnbNNBadge svg#lnb-review-widget-stars {
+    width: 100%;
+}
+.lnbNNBadge svg#lnb-review-widget-stars {
+    padding: 5px;
+    margin: 0;
+    width: 100%;
+}
+.lnbNNBadge .nn-badge-title, .lnbNNBadge .nn-badge-subtitle {
+    font-size: 14px;
+}
+.lnbNNBadge a {
+    display: block;
+}
+.lnbNNBadge a:hover {
+    color: #333;
+	background:#f1f1f1;
+}

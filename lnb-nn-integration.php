@@ -3,8 +3,8 @@
 /*
 Plugin Name: LeadsNearby Nearby Now Stynamic Integration
 Description: Includes an API class that gets and stores Nearby Now data in the database for easy retrieval. Also includes a widget.
-Version: 2.6.2
-Author: LeadsNearby (Andrew Gillingham)
+Version: 2.6.3
+Author: LeadsNearby
  */
 
 require_once plugin_dir_path(__FILE__) . '/lib/class-nn-api.php';
@@ -41,6 +41,8 @@ if ($apikey) {
     new NN_Static_Widget($nn_api);
     require_once plugin_dir_path(__FILE__) . '/lib/class-nn-testimonial-widget.php';
     new NN_Testimonial_Widget($nn_api);
+	require_once plugin_dir_path(__FILE__) . '/lib/class-nn-badge.php';
+    new NN_Static_Badge($nn_api);
 
     $nn_data = $nn_api->get_data();
 
