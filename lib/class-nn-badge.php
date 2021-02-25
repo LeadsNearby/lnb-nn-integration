@@ -89,6 +89,19 @@ if (!class_exists('NN_Static_Badge')):
 
                 ob_start();?>
 
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": "<?php echo get_the_title( $ID ); ?>",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "<?php echo $nn_data['aggregateRating']['ratingValue']; ?>",
+        "reviewCount": "<?php echo $nn_data['aggregateRating']['reviewCount']; ?>"
+      }
+    }
+    </script>
+
 	<div class="lnbNNBadge lnbReviewsWidget--<?php echo $type; ?>"<?php if ($css_widget_string) {?> style="<?php echo $css_widget_string; ?>"<?php }?>>
 					<?php if (!empty($url)) { ?>
 				<a href="<?php echo $url; ?>">
