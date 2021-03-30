@@ -59,7 +59,7 @@ if (!class_exists('NN_Testimonial_Widget')):
                 $html = "This widget requires the NN_API class";
             }
 
-            if (!empty($nn_data)) {
+            if (!empty($nn_data) && !is_wp_error($nn_data)) {
 
                 $fiveStarReviews = array_values(array_filter($nn_data['reviews'], [$this, 'findReviews']));
 
